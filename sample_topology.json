@@ -1,0 +1,57 @@
+{
+  "snap_tolerance": 5.0,
+  "nodes": [
+    {
+      "id": "Node1",
+      "x": 100,
+      "y": 50,
+      "attached_symbols": [
+        {
+          "label": "CB-23",
+          "symbol_type": "CB",
+          "distance": 0
+        }
+      ]
+    },
+    {
+      "id": "Node2",
+      "x": 250,
+      "y": 50,
+      "attached_symbols": [
+        {
+          "label": "SP-12",
+          "symbol_type": "SP",
+          "distance": 0
+        }
+      ]
+    },
+    {
+      "id": "Node3",
+      "x": 400,
+      "y": 50,
+      "attached_symbols": [
+        {
+          "label": "BM-5",
+          "symbol_type": "AnchorMast",
+          "distance": 0
+        }
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "id": "Edge1",
+      "from_node": "Node1",
+      "to_node": "Node2",
+      "length": 150,
+      "source_line_id": "line-1"
+    },
+    {
+      "id": "Edge2",
+      "from_node": "Node2",
+      "to_node": "Node3",
+      "length": 150,
+      "source_line_id": "line-2"
+    }
+  ]
+}

@@ -1,69 +1,56 @@
-# Topology Snap Algorithm
+# Basic Network Graph
 
-This is the topology layer after:
+This layer uses snapped topology output to create a NetworkX graph.
 
-1. PDF parsing
-2. Rule-based symbol classification
+## Flow
 
-It reads parsed line geometry and creates a snapped topology graph.
+1. Take snapped points:
 
-## Steps
+   ```text
+   (100,50)
+   (250,50)
+   (400,50)
+   ```
 
-1. Extract all line endpoints from parser output.
-2. Compare endpoint distances.
-3. Merge endpoints within `SNAP_TOLERANCE = 5`.
-4. Create snapped topology nodes.
-5. Create graph edges between snapped nodes.
-6. Attach classified symbols to nearest nodes.
-7. Report validation information such as dangling nodes.
+2. Create nodes:
 
-## Example
+   ```text
+   Node1
+   Node2
+   Node3
+   ```
 
-Before snapping:
+3. Create edges:
 
-```text
-(100, 50)
-(250, 50)
-(252, 51)
-(400, 50)
-```
+   ```text
+   Node1 ---- Node2
+   Node2 ---- Node3
+   ```
 
-Distance between `(250, 50)` and `(252, 51)` is less than 5, so they are merged.
+4. Attach symbols:
 
-After snapping:
+   ```text
+   Node1 -> CB-23
+   Node2 -> SP-12
+   Node3 -> BM-5
+   ```
 
-```text
-N1 = (100, 50)
-N2 = average of (250, 50), (252, 51)
-N3 = (400, 50)
-```
+5. Query relationships:
 
-Edges:
+   ```text
+   CB-23 connected to SP-12
+   SP-12 connected to BM-5
+   ```
 
-```text
-N1 -> N2
-N2 -> N3
+## Install
+
+```bash
+pip install -r requirements.txt
 ```
 
 ## Run
 
 ```bash
-python3 topology_snap.py
-```
-
-## Expected Parser Shape
-
-```json
-{
-  "symbols": [
-    { "label": "CB-23", "x": 100, "y": 50 }
-  ],
-  "lines": [
-    { "x1": 100, "y1": 50, "x2": 250, "y2": 50 }
-  ],
-  "classifications": [
-    { "label": "CB-23", "symbol_type": "CB" }
-  ]
-}
+python3 network_graph.py
 ```
 
