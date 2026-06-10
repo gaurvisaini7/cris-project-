@@ -1,65 +1,69 @@
-# cris-project-
- OHE Symbol Classifier
+# Topology Snap Algorithm
 
-This code follows the classifier shown in the workflow slide.
+This is the topology layer after:
 
-## Classifier Used
+1. PDF parsing
+2. Rule-based symbol classification
 
-The main working classifier is:
+It reads parsed line geometry and creates a snapped topology graph.
 
-```text
-Layer 1 - Regex/rule-based classifier
-```
+## Steps
 
-It also includes:
+1. Extract all line endpoints from parser output.
+2. Compare endpoint distances.
+3. Merge endpoints within `SNAP_TOLERANCE = 5`.
+4. Create snapped topology nodes.
+5. Create graph edges between snapped nodes.
+6. Attach classified symbols to nearest nodes.
+7. Report validation information such as dangling nodes.
 
-```text
-Layer 2 - ML fallback placeholder for BERT or scikit-learn
-Layer 3 - Human review queue
-```
+## Example
 
-The ML layer is only a placeholder until a labelled OHE dataset is available.
-
-## Rules
-
-```text
-CB-*  -> CB
-SM-*  -> SPI_Remote
-BM-*  -> AnchorMast
-SS-*  -> SectionInsulator
-X-*   -> SP
-TSS   -> FP
-```
-
-Extra GP diagram rules are also included:
+Before snapping:
 
 ```text
-E/S-* -> ElementarySection
-L-*   -> LineTrack
-BX-*  -> BusSection
-S-*   -> SignalPosition
-SH-*  -> ShuntSignal
-BS-*  -> BufferStop
+(100, 50)
+(250, 50)
+(252, 51)
+(400, 50)
 ```
 
-## Run Demo
+Distance between `(250, 50)` and `(252, 51)` is less than 5, so they are merged.
+
+After snapping:
+
+```text
+N1 = (100, 50)
+N2 = average of (250, 50), (252, 51)
+N3 = (400, 50)
+```
+
+Edges:
+
+```text
+N1 -> N2
+N2 -> N3
+```
+
+## Run
 
 ```bash
-python3 symbol_classifier_backend.py
+python3 topology_snap.py
 ```
 
-## Run API
+## Expected Parser Shape
 
-```bash
-pip install -r requirements.txt
-uvicorn symbol_classifier_backend:app --reload
-```
-
-Then test:
-
-```bash
-curl -X POST http://127.0.0.1:8000/classify \
-  -H "Content-Type: application/json" \
-  -d '{"labels":["CB-23","SM-161","BM-170","SS-277","UNKNOWN-1"]}'
+```json
+{
+  "symbols": [
+    { "label": "CB-23", "x": 100, "y": 50 }
+  ],
+  "lines": [
+    { "x1": 100, "y1": 50, "x2": 250, "y2": 50 }
+  ],
+  "classifications": [
+    { "label": "CB-23", "symbol_type": "CB" }
+  ]
+}
 ```
 
